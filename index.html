@@ -491,11 +491,69 @@
       if(!context) return alert("Keine Parameter.");
       
       const prompt = `
-        Role: Expert Video AI Prompt Engineer.
-        Task: Create a high-quality JSON payload for Sora/Kling based on context.
-        Context: ${context}
-        Output: Strict JSON.
-        Format: { "prompt": "...", "negative_prompt": "...", "parameters": { "width": 1920, "height": 1080 } }
+        You are an expert AI Prompt Engineer.
+        
+        TASK:
+        Create a high-quality JSON payload for Generative AI based on the German input context.
+        
+        MODE: ${currentMode === 'video' ? 'VIDEO (Sora/Kling)' : 'IMAGE (SDXL/Flux/Midjourney)'}
+        
+        INPUT CONTEXT:
+        ${context}
+
+        INSTRUCTIONS:
+        1. **Prompt Engineering**: Write a sophisticated English prompt. Use advanced keywords for lighting, texture, and lens effects based on the input.
+        2. **JSON Structure**:
+           - **IF IMAGE**: output a structure compatible with advanced diffusion APIs (parameters object with width/height, steps, etc.). Also include a 'prompt_components' object that breaks down the prompt into 'subject', 'environment', 'lighting', 'camera', 'style'.
+           - **IF VIDEO**: output a prompt + video_settings object. Also include 'prompt_components'.
+        3. **Resolution**: Calculate pixel width/height based on the requested aspect ratio (e.g., 16:9 -> 1216x832 for images).
+        
+        OUTPUT FORMAT (JSON Only):
+        
+        IF IMAGE:
+        {
+          "positive_prompt": "Full concatenated prompt...",
+          "prompt_components": {
+            "subject": "...",
+            "environment": "...",
+            "lighting": "...",
+            "camera": "...",
+            "style": "..."
+          },
+          "negative_prompt": "...",
+          "parameters": {
+            "width": 1024,
+            "height": 1024,
+            "steps": 30,
+            "guidance_scale": 7.0,
+            "seed": -1,
+            "sampler_name": "DPM++ 2M Karras"
+          },
+          "meta": {
+             "model": "SDXL / Flux",
+             "style_preset": "..."
+          }
+        }
+
+        IF VIDEO:
+        {
+          "prompt": "Full concatenated prompt...",
+          "prompt_components": {
+            "subject": "...",
+            "environment": "...",
+            "lighting": "...",
+            "camera": "...",
+            "style": "..."
+          },
+          "negative_prompt": "...",
+          "video_settings": {
+             "width": 1920,
+             "height": 1080,
+             "fps": 24,
+             "duration": "5s",
+             "motion": "..."
+          }
+        }
       `;
 
       try {
@@ -504,9 +562,13 @@
         
         if(getVal('aspectRatio')) {
             const res = getResolutionFromAspect(getVal('aspectRatio'));
-            if(!json.parameters) json.parameters = {};
-            json.parameters.width = res.w;
-            json.parameters.height = res.h;
+            if(json.parameters) {
+                json.parameters.width = res.w;
+                json.parameters.height = res.h;
+            } else if (json.video_settings) {
+                json.video_settings.width = res.w;
+                json.video_settings.height = res.h;
+            }
         }
         
         const code = document.getElementById('codeBlock');
@@ -519,10 +581,24 @@
     function generateLocalJSON() {
       const context = getSummaryText();
       const result = {
-        prompt: context.replace(/\|/g, '.'),
+        positive_prompt: context.replace(/\|/g, '.'),
+        prompt_components: {
+            raw_context: context
+        },
         negative_prompt: "bad quality, blurry",
-        settings: { width: 1920, height: 1080, aspect: getVal('aspectRatio') || "16:9" }
+        parameters: { width: 1024, height: 1024, aspect: getVal('aspectRatio') || "1:1" }
       };
+      
+      if (currentMode === 'video') {
+          result.video_settings = {
+              width: 1920,
+              height: 1080,
+              fps: 24,
+              duration: "5s"
+          };
+          delete result.parameters;
+      }
+
       const code = document.getElementById('codeBlock');
       code.textContent = JSON.stringify(result, null, 2);
       if(window.Prism) Prism.highlightElement(code);
@@ -547,7 +623,7 @@
 
     window.onload = () => { 
       loadKey();
-      setMode('video'); 
+      setMode('photo'); // Standard auf Foto gesetzt
     };
   </script>
 </body>
