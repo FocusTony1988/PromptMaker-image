@@ -416,28 +416,71 @@
       const input = document.getElementById('smartInput').value;
       if(!input) return alert("Bitte Text eingeben!");
       
-      const fieldIds = fieldConfig.filter(f => f.type === 'select' || f.type === 'textarea').map(f => f.id).join(', ');
+      // 1. Schema erstellen (damit die AI weiß, welche Werte erlaubt sind)
+      let schemaDescription = [];
+      
+      fieldConfig.forEach(f => {
+        if (!f.modes.includes(currentMode)) return; // Nur aktive Felder
+        if (f.type === 'select') {
+           // Liste der erlaubten Werte erstellen
+           const options = f.options.map(o => `${o[1]} (${o[0]})`).join(', ');
+           schemaDescription.push(`Field "${f.id}" (Select): Choose one of [${options}]`);
+        } else if (f.type === 'textarea') {
+           schemaDescription.push(`Field "${f.id}" (Text): Summarize relevant details.`);
+        }
+      });
+
+      const schemaStr = schemaDescription.join('\n');
       
       const prompt = `
-        Analyze this description: "${input}". 
-        Map it to a JSON object using strictly these keys: ${fieldIds}.
-        For 'select' fields, verify the value matches standard English terms (e.g. 'woman', 'cyberpunk', '16:9').
-        For 'textarea' fields (action), summarize the action.
-        Return ONLY valid JSON.
+        Role: Intelligent Form Filler.
+        Task: Map the user's natural language description to specific form values.
+        
+        User Description: "${input}"
+        
+        Target Form Schema (IDs and allowed values):
+        ${schemaStr}
+        
+        Instructions:
+        1. Analyze the User Description.
+        2. For each field in the schema, pick the best matching value from the allowed options.
+        3. If the description implies a value (e.g. "cyberpunk city" -> sceneType="cyberpunk", location="NYC street" if implied), set it.
+        4. If a specific detail is missing in the description, DO NOT invent one. Leave the field out of the JSON.
+        5. Return a flat JSON object where keys are the Field IDs and values are the chosen values.
+        
+        Output format: JSON ONLY. No markdown.
       `;
 
       try {
         const jsonStr = await fetchFromApi(prompt, null, 'btnAutoFill', 'spinAuto');
         const data = JSON.parse(jsonStr);
         
+        // Werte anwenden
+        let count = 0;
         for (const [key, value] of Object.entries(data)) {
           const el = document.getElementById(key);
-          if (el) el.value = value;
+          if (el && value) {
+            // Check if it's a checkbox we need to activate parent for?
+            // The logic currently hides fields based on 'describePerson'.
+            // If the AI returns person attributes, we should ensure describePerson is checked.
+            if(['gender', 'hairColor', 'clothing'].includes(key)) {
+               const chk = document.getElementById('describePerson');
+               if(chk && !chk.checked) { chk.checked = true; handleVisibility(); }
+            }
+            
+            el.value = value;
+            count++;
+          }
         }
         updateSummary();
+        // Optional: Feedback
+        const btn = document.getElementById('btnAutoFill');
+        const oldHtml = btn.innerHTML;
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> ${count} Felder`;
+        setTimeout(() => btn.innerHTML = oldHtml, 2000);
+        
       } catch (e) {
         console.error(e);
-        // Alert handled inside fetchFromApi for network errors, but parsing errors go here
         if(!e.message.includes('Failed to fetch')) alert("Auto-Fill Fehler: " + e.message);
       }
     }
