@@ -11,6 +11,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <script src="config.js"></script>
+
   <style>
     :root {
       --bg-color: #020617; --sidebar-bg: #0f172a; --card-bg: #1e293b;
@@ -126,7 +128,7 @@
 
       <div class="api-settings">
         <label for="apiKey" style="display:flex; justify-content:space-between;">Gemini API Key <span id="keyStatus" style="font-size:0.7em; color:var(--success);"></span></label>
-        <input type="password" id="apiKey" placeholder="Hier API Key einfügen..." oninput="saveKey()" value="AIzaSyAMQ1acqN7GAGBT-dELwdBeBpDityuYy2s">
+        <input type="password" id="apiKey" placeholder="Hier API Key einfügen..." oninput="saveKey()" value="">
         
         <div style="display:flex; gap:10px; margin-top:10px;">
           <select id="modelSelect" style="font-size:0.8rem; padding:8px;">
@@ -312,7 +314,7 @@
       updateSummary();
     }
 
-    // --- KEY MANAGEMENT (LocalStorage) ---
+    // --- KEY MANAGEMENT (LocalStorage & Config) ---
     function saveKey() {
       const key = document.getElementById('apiKey').value;
       localStorage.setItem('gemini_api_key', key);
@@ -321,14 +323,24 @@
 
     function loadKey() {
       const stored = localStorage.getItem('gemini_api_key');
-      // Always prioritize the hardcoded key if user hasn't set one yet
-      // But if user typed one, use that.
+      const inputField = document.getElementById('apiKey');
+
+      // 1. Priorität: LocalStorage (User hat ihn manuell eingegeben/überschrieben)
       if (stored) {
-        document.getElementById('apiKey').value = stored;
+        inputField.value = stored;
         updateKeyStatus(true);
-      } else {
-        // Fallback is already in HTML 'value' attribute
-        updateKeyStatus(true); // Technically 'saved' in code
+      } 
+      // 2. Priorität: config.js (Lokale Entwicklung, sicher geladen)
+      else if (typeof SECRET_CONFIG !== 'undefined' && SECRET_CONFIG.API_KEY) {
+        inputField.value = SECRET_CONFIG.API_KEY;
+        // Speichere es auch im LocalStorage für Bequemlichkeit
+        localStorage.setItem('gemini_api_key', SECRET_CONFIG.API_KEY);
+        updateKeyStatus(true);
+      } 
+      // 3. Fallback: Leer
+      else {
+        inputField.value = "";
+        updateKeyStatus(false);
       }
     }
 
