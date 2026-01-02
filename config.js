@@ -1,3 +1,3 @@
 const SECRET_CONFIG = {
-  API_KEY: "AIzaSyCnKMYnbM3uo3t9AqIFxerD2c5dFmFTHv8" 
+  API_KEY: "AIzaSyC4qegXWVcwjh1QfR2YhlgH0_z0-mMJqAY" 
 };
