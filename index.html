@@ -11,9 +11,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Optional Config Load -->
-  <script src="config.js" onerror="console.log('No config.js found, using manual input.')"></script>
-
   <style>
     :root {
       --bg-color: #020617; --sidebar-bg: #0f172a; --card-bg: #1e293b;
@@ -140,8 +137,7 @@
       </div>
 
       <div class="scroll-area" id="controls">
-        <!-- Dynamically filled by JS -->
-      </div>
+        </div>
 
       <div class="api-settings">
         <label for="apiKey" style="display:flex; justify-content:space-between;">Gemini API Key <span id="keyStatus" style="font-size:0.8em; color:var(--text-muted);"></span></label>
@@ -149,8 +145,8 @@
         
         <div style="display:flex; gap:10px; margin-top:10px;">
           <select id="modelSelect" style="font-size:0.8rem; padding:8px;">
-            <option value="gemini-2.5-flash">Gemini 2.5 (Smartest)</option>
-            <option value="gemini-1.5-flash">Gemini 1.5 (Fastest)</option>
+            <option value="gemini-2.0-flash">Gemini 2.0 (New & Fast)</option>
+            <option value="gemini-1.5-flash">Gemini 1.5 (Standard)</option>
           </select>
         </div>
 
@@ -395,7 +391,7 @@
       updateSummary();
     }
 
-    // --- KEY MANAGEMENT ---
+    // --- KEY MANAGEMENT (SECURITY UPDATE) ---
     function saveKey() {
       const key = document.getElementById('apiKey').value;
       localStorage.setItem('gemini_api_key', key);
@@ -403,18 +399,24 @@
     }
 
     function loadKey() {
-      const stored = localStorage.getItem('gemini_api_key');
       const input = document.getElementById('apiKey');
       
-      // Load config from file if available
-      if (typeof SECRET_CONFIG !== 'undefined' && SECRET_CONFIG.API_KEY) {
-         input.value = SECRET_CONFIG.API_KEY;
-         updateKeyStatus(true);
-      } else if (stored) {
+      // 1. Check for Netlify Injected Key (Priorität)
+      if (window.SECRET_CONFIG && window.SECRET_CONFIG.API_KEY) {
+          console.log("Secure Environment detected. Using Injected Key.");
+          input.value = window.SECRET_CONFIG.API_KEY; // Fill it for the logic
+          input.disabled = true; // Sperren, damit man nichts kaputt macht
+          document.getElementById('keyStatus').innerText = '● Secure (Netlify)';
+          document.getElementById('keyStatus').style.color = 'var(--success)';
+          return;
+      }
+
+      // 2. Fallback: LocalStorage (für lokale Tests ohne Netlify)
+      const stored = localStorage.getItem('gemini_api_key');
+      if (stored) {
          input.value = stored;
          updateKeyStatus(true);
       } else {
-         // Keep the value currently in HTML
          updateKeyStatus(!!input.value);
       }
     }
@@ -437,7 +439,8 @@
       const model = document.getElementById('modelSelect').value;
       
       if (!apiKey) {
-        alert("API Key fehlt!");
+        alert("API Key fehlt! Bitte in den Einstellungen eintragen.");
+        document.getElementById('apiKey').disabled = false;
         document.getElementById('apiKey').focus();
         throw new Error("Missing API Key");
       }
