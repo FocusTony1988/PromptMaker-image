@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nano Banana - AI Director Suite</title>
+    <style>
+        /* --- DESIGN SYSTEM --- */
+        :root {
+            --bg-body: #050810;       
+            --bg-card: #0f121d;       
+            --bg-input: #1a1e2e;      
+            --border-color: #2a2e3b;
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --accent-color: #8b5cf6;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --font-code: 'SF Mono', 'Fira Code', Consolas, monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            background-image: radial-gradient(circle at top center, #1e1b4b 0%, transparent 40%);
+        }
+
+        /* --- HEADER & HERO --- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(5, 8, 16, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand span {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .badge-pro {
+            background: rgba(139, 92, 246, 0.15);
+            color: #c4b5fd;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* --- INTRO SECTION --- */
+        .intro-section {
+            max-width: 800px;
+            margin: 60px auto 40px auto;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .intro-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            line-height: 1.2;
+            background: linear-gradient(to right, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .intro-features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .feature-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-icon { color: var(--accent-color); }
+
+        /* --- GRID LAYOUT --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto 60px auto;
+            padding: 0 20px;
+        }
+
+        /* --- CARD DESIGN --- */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s, border-color 0.2s;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+            border-color: #4c1d95;
+        }
+
+        /* Header in Card */
+        .card-header {
+            padding: 25px 25px 15px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            background: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent);
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        /* --- INPUTS & CONTROLS --- */
+        .controls {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #a1a1aa;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .reset-link {
+            cursor: pointer;
+            color: var(--accent-color);
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            font-size: 0.7rem;
+        }
+        .reset-link:hover { opacity: 1; text-decoration: underline; }
+
+        input[type="text"], select {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: #e2e8f0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            width: 100%;
+            transition: all 0.2s;
+            
+            /* Custom Dropdown Arrow */
+            appearance: none; 
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        /* Remove default arrow for inputs */
+        input[type="text"] { background-image: none; }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background-color: #202434;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+        }
+
+        input::placeholder { color: #475569; }
+
+        /* --- PROMPT RESULT BOX --- */
+        .prompt-result {
+            background-color: #020408;
+            padding: 20px 25px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .prompt-code {
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            color: #a5b4fc; /* Soft Indigo */
+            line-height: 1.5;
+            min-height: 3.5em; /* Prevent layout shift */
+            word-break: break-word;
+        }
+        
+        /* Highlight variable parts */
+        .var-highlight {
+            color: #4ade80; /* Green for user inputs */
+            font-weight: bold;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .copy-btn {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: filter 0.2s, transform 0.1s;
+        }
+
+        .copy-btn:hover { filter: brightness(1.1); }
+        .copy-btn:active { transform: scale(0.98); }
+
+        .copy-btn svg { width: 18px; height: 18px; }
+
+        .copy-btn.success {
+            background: var(--success);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 600px) {
+            .grid-container { grid-template-columns: 1fr; }
+            .intro-section h1 { font-size: 1.8rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-content">
+            <div class="brand">
+                <span>NANO BANANA</span> <div class="badge-pro">Generator 2.0</div>
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.8rem;">Ready for Sora & Midjourney</div>
+        </div>
+    </header>
+
+    <div class="intro-section">
+        <h1>Präzise Regieanweisungen für deine KI</h1>
+        <p style="color: #94a3b8; font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+            Diese Vorlagen übersetzen deine Ideen in perfekte englische Prompts. 
+            Das Ziel ist <strong>Konsistenz</strong> (gleiche Charaktere), <strong>Kontrolle</strong> (Kamera, Licht) und 
+            <strong>Effizienz</strong> (weniger Fehlversuche).
+        </p>
+        
+        <div class="intro-features">
+            <div class="feature-item"><span class="feature-icon">✨</span> Professionelles Englisch</div>
+            <div class="feature-item"><span class="feature-icon">🎬</span> Regie-Fachbegriffe</div>
+            <div class="feature-item"><span class="feature-icon">⚡</span> Copy & Paste Ready</div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Kleidung ändern</h3>
+                <div class="card-desc">Behält Pose & Gesicht, tauscht nur das Outfit.</div>
+            </div>
+            <div class="controls">
+                <div class="input-group">
+                    <label>Neues Outfit <span class="reset-link" onclick="resetInput('input-clothes', 'updateClothes')">Reset ↺</span></label>
+                    <input type="text" id="input-clothes" placeholder="z.B. tuxedo, yellow raincoat, cyberpunk armor..." oninput="updateClothes()">
+                </div>
+            </div>
+            <div class="prompt-result">
+                <div class="prompt-code" id="code-clothes">
+                    Change the clothing of the person in the reference image to a <span class="var-highlight">[outfit]</span>, maintain original pose and facial features.
+                </div>
+                <button class="copy-btn" onclick="copyPrompt('code-clothes', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Prompt kopieren
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Objekt hinzufügen</h3>
+                <div class="card-desc">Integriert neue Elemente nahtlos in die Szene.</div>
+            </div>
+            <div class="controls">
+                <div class="input-group">
+                    <label>Objekt <span class="reset-link" onclick="resetInput('input-add-obj', 'updateAddObj')">Reset ↺</span></label>
+                    <input type="text" id="input-add-obj" placeholder="z.B. vintage red scooter, sleeping cat..." oninput="updateAddObj()">
+                </div>
+            </div>
+            <div class="prompt-result">
+                <div class="prompt-code" id="code-add-obj">
+                    Add a <span class="var-highlight">[object]</span> into the scene, ensure realistic shadows, lighting match and seamless blending.
+                </div>
+                <button class="copy-btn" onclick="copyPrompt('code-add-obj', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Prompt kopieren
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Stil & Ästhetik</h3>
+                <div class="card-desc">Definiere den künstlerischen Look.</div>
+            </div>
+            <div class="controls">
+                <div class="input-group">
+                    <label>Stil Preset</label>
+                    <select id="select-style" onchange="updateStyle()">
+                        <option value="hand-drawn comic book style, bold lines">Comic (Handgezeichnet)</option>
+                        <option value="Japanese Anime style, Studio Ghibli inspired">Anime (Ghibli)</option>
+                        <option value="cinematic photorealistic 8k, highly detailed">Photorealistisch (Kino)</option>
+                        <option value="Cyberpunk 2077 aesthetic, neon lights">Cyberpunk / Neon</option>
+                        <option value="3D render, Pixar style, cute, soft lighting">Pixar / 3D Cute</option>
+                        <option value="oil painting on canvas, impasto texture">Ölgemälde</option>
+                        <option value="vintage polaroid photo, film grain">Polaroid / Vintage</option>
+                        <option value="custom">-- Eigener Text (siehe unten) --</option>
+                    </select>
+                </div>
+                <div class="input-group" id="group-style-custom" style="display:none;">
+                    <input type="text" id="input-style-custom" placeholder="Beschreibe deinen Stil..." oninput="updateStyle()">
+                </div>
+            </div>
+            <div class="prompt-result">
+                <div class="prompt-code" id="code-style">
+                    Transform this image into <span class="var-highlight">hand-drawn comic book style, bold lines</span>, keep the composition but change the visual rendering entirely.
+                </div>
+                <button class="copy-btn" onclick="copyPrompt('code-style', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Prompt kopieren
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Kamera & Winkel</h3>
+                <div class="card-desc">Bestimme Perspektive und Linse.</div>
+            </div>
+            <div class="controls">
+                <div class="input-group">
+                    <label>Perspektive</label>
+                    <select id="select-camera" onchange="updateCamera()">
+                        <option value="eye-level shot">Augenhöhe (Neutral)</option>
+                        <option value="low angle shot, looking up, imposing">Froschperspektive (Mächtig)</option>
+                        <option value="high angle shot, looking down">Vogelperspektive (Übersicht)</option>
+                        <option value="top-down overhead shot">Top-Down (Draufsicht)</option>
+                        <option value="dutch angle shot, dynamic tilt">Dutch Angle (Dynamisch schräg)</option>
+                        <option value="extreme close-up macro shot">Makro (Detail)</option>
+                        <option value="wide angle lens shot, 16mm">Weitwinkel (Viel Umgebung)</option>
+                        <option value="telephoto lens shot, bokeh background">Teleobjektiv (Portrait/Bokeh)</option>
+                        <option value="GoPro action cam footage, fisheye">GoPro / Action</option>
+                        <option value="drone photography, aerial view">Drohne</option>
+                    </select>
+                </div>
+            </div>
+            <div class="prompt-result">
+                <div class="prompt-code" id="code-camera">
+                    Re-imagine the scene from a <span class="var-highlight">eye-level shot</span>, keeping the subject consistent but changing the viewpoint.
+                </div>
+                <button class="copy-btn" onclick="copyPrompt('code-camera', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Prompt kopieren
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Licht & Atmosphäre</h3>
+                <div class="card-desc">Lichtstimmung ändert die Emotion.</div>
+            </div>
+            <div class="controls">
+                <div class="input-group">
+                    <label>Licht Setup</label>
+                    <select id="select-light" onchange="updateLight()">
+                        <option value="soft natural morning light">Morgensonne (Weich)</option>
+                        <option value="golden hour lighting, warm tones">Golden Hour (Romantisch/Warm)</option>
+                        <option value="cinematic dramatic lighting, high contrast">Dramatisch (Kino)</option>
+                        <option value="neon noir lighting, pink and blue hues, dark">Neon / Nachtclub</option>
+                        <option value="professional studio lighting, softbox">Studio (Clean)</option>
+                        <option value="dark moody candlelight, chiaroscuro">Kerzenschein (Moody)</option>
+                        <option value="volumetric god rays, misty atmosphere">God Rays (Mystisch)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="prompt-result">
+                <div class="prompt-code" id="code-light">
+                    Change the lighting to <span class="var-highlight">soft natural morning light</span>, enhance shadows and atmosphere accordingly.
+                </div>
+                <button class="copy-btn" onclick="copyPrompt('code-light', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2-2v1"></path></svg>
+                    Prompt kopieren
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Materialwechsel</h3>
+                <div class="card-desc">Ändert Oberflächen (z.B. Holz zu Gold).</div>
+            </div>
+            <div class="controls">
+                <div class="input-group">
+                    <label>Welches Objekt?</label>
+                    <input type="text" id="input-mat-obj" placeholder="z.B. the sofa, the car..." oninput="updateMaterial()">
+                </div>
+                <div class="input-group">
+                    <label>Neues Material</label>
+                    <select id="select-mat-type" onchange="updateMaterial()">
+                        <option value="smooth cognac leather">Leder (Cognac)</option>
+                        <option value="rough denim fabric">Jeansstoff</option>
+                        <option value="polished mahogany wood">Mahagoni Holz</option>
+                        <option value="brushed stainless steel">Gebürsteter Stahl</option>
+                        <option value="transparent glass">Glas (Transparent)</option>
+                        <option value="shiny gold texture">Gold (Glänzend)</option>
+                        <option value="white marble">Weißer Marmor</option>
+                        <option value="fluffy wool">Wolle / Plüsch</option>
+                        <option value="custom">-- Eigenes Material --</option>
+                    </select>
+                    <input type="text" id="input-mat-custom" placeholder="Material beschreiben..." style="display:none; margin-top:10px;" oninput="updateMaterial()">
+                </div>
+            </div>
+            <div class="prompt-result">
+                <div class="prompt-code" id="code-material">
+                    Change the material of <span class="var-highlight">[object]</span> to <span class="var-highlight">smooth cognac leather</span>, maintain geometry but update reflections.
+                </div>
+                <button class="copy-btn" onclick="copyPrompt('code-material', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Prompt kopieren
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* --- UTILITY FUNCTIONS --- */
+        function highlight(text) {
+            return `<span class="var-highlight">${text}</span>`;
+        }
+
+        function resetInput(id, updateFunc) {
+            document.getElementById(id).value = '';
+            window[updateFunc](); // Ruft die Update Funktion dynamisch auf
+        }
+
+        /* --- LOGIC FUNCTIONS --- */
+
+        function updateClothes() {
+            const val = document.getElementById('input-clothes').value || "[outfit]";
+            const html = `Change the clothing of the person in the reference image to a ${highlight(val)}, maintain original pose and facial features.`;
+            document.getElementById('code-clothes').innerHTML = html;
+        }
+
+        function updateAddObj() {
+            const val = document.getElementById('input-add-obj').value || "[object]";
+            const html = `Add a ${highlight(val)} into the scene, ensure realistic shadows, lighting match and seamless blending.`;
+            document.getElementById('code-add-obj').innerHTML = html;
+        }
+
+        function updateStyle() {
+            const select = document.getElementById('select-style');
+            let val = select.value;
+            const customGroup = document.getElementById('group-style-custom');
+            const customInput = document.getElementById('input-style-custom');
+
+            if(val === 'custom') {
+                customGroup.style.display = 'block';
+                val = customInput.value || "[custom style]";
+            } else {
+                customGroup.style.display = 'none';
+            }
+            
+            const html = `Transform this image into ${highlight(val)}, keep the composition but change the visual rendering entirely.`;
+            document.getElementById('code-style').innerHTML = html;
+        }
+
+        function updateCamera() {
+            const val = document.getElementById('select-camera').value;
+            const html = `Re-imagine the scene from a ${highlight(val)}, keeping the subject consistent but changing the viewpoint.`;
+            document.getElementById('code-camera').innerHTML = html;
+        }
+
+        function updateLight() {
+            const val = document.getElementById('select-light').value;
+            const html = `Change the lighting to ${highlight(val)}, enhance shadows and atmosphere accordingly.`;
+            document.getElementById('code-light').innerHTML = html;
+        }
+
+        function updateMaterial() {
+            const obj = document.getElementById('input-mat-obj').value || "[object]";
+            const select = document.getElementById('select-mat-type');
+            const customInput = document.getElementById('input-mat-custom');
+            
+            let mat = select.value;
+            
+            if (mat === 'custom') {
+                customInput.style.display = 'block';
+                mat = customInput.value || "[custom material]";
+            } else {
+                customInput.style.display = 'none';
+            }
+
+            const html = `Change the material of ${highlight(obj)} to ${highlight(mat)}, maintain geometry but update reflections and texture.`;
+            document.getElementById('code-material').innerHTML = html;
+        }
+
+        /* --- COPY FUNCTIONALITY --- */
+        function copyPrompt(elementId, btn) {
+            // Text ohne HTML Tags extrahieren
+            const container = document.getElementById(elementId);
+            const textToCopy = container.innerText;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalContent = btn.innerHTML;
+                
+                // Success State
+                btn.innerHTML = `✓ Kopiert!`;
+                btn.classList.add('success');
+                
+                // Reset timer
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.classList.remove('success');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
