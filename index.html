@@ -210,6 +210,11 @@
       // --- PERSON ---
       { type: 'header', label: 'Hauptmotiv: Person', icon: 'fa-user', modes: ['photo', 'video'] },
       { type: 'checkbox', id: 'describePerson', label: 'Person beschreiben', default: true, modes: ['photo', 'video'] },
+      
+      // NEW: CELEBRITY TOGGLE
+      { type: 'checkbox', id: 'useCelebrity', label: 'Promi / Star nutzen?', parent: 'describePerson', default: false, modes: ['photo', 'video'] },
+      { type: 'text', id: 'celebrityName', label: 'Name des Promis', parent: 'useCelebrity', modes: ['photo', 'video'], placeholder: 'z.B. Elon Musk, Marilyn Monroe...' },
+      
       { type: 'select', id: 'gender', label: 'Geschlecht', parent: 'describePerson', modes: ['photo', 'video'], options: [['Bitte wählen',''],['Frau','woman'],['Mann','man'],['Non-Binär','non-binary person'],['Android/Roboter','android robot'],['Cybernetisch','cybernetic human'],['Mystisches Wesen','mythical being']] },
       { type: 'select', id: 'ageGroup', label: 'Alter', parent: 'describePerson', modes: ['photo', 'video'], options: [['Bitte wählen',''],['Kind (5-10)','child, 8 years old'],['Teenager','teenager'],['Jung (20er)','20 years old, young adult'],['30er','30 years old'],['40er','40 years old, mature'],['50er','50 years old'],['60er','60 years old'],['Alt (70+)','70 years old, elderly']]},
       { type: 'select', id: 'ethnicity', label: 'Herkunft / Look', parent: 'describePerson', modes: ['photo', 'video'], options: [['Bitte wählen',''],['Amerikanisch','American'],['Deutsch/Nordeuropäisch','Germanic'],['Französisch','French'],['Italienisch/Mediterran','Mediterranean'],['Skandinavisch','Scandinavian'],['Osteuropäisch','Slavic'],['Afrikanisch','African descent'],['Ostasiatisch (Jap/Kor/Chi)','East Asian'],['Südasiatisch (Indien)','South Asian'],['Latino/Hispanic','Latino'],['Arabisch','Middle Eastern'],['Futuristisch','futuristic skin'],['Fantasy (Elf/Ork)','fantasy features']]},
@@ -242,6 +247,16 @@
       { type: 'select', id: 'lighting', label: 'Lichtsetzung', modes: ['photo', 'video'], options: [['Bitte wählen',''],['Cinematic (Dramatisch)','dramatic cinematic lighting'],['Soft Window Light','soft natural window light'],['Golden Hour','golden hour sunlight'],['Volumetrisch (Nebel)','volumetric god rays'],['Neon (Cyberpunk)','neon cyan and magenta lighting'],['Dark / Moody','dark moody low-key lighting'],['Studio Softbox','professional studio softbox'],['Rembrandt','Rembrandt lighting'],['Hartes Sonnenlicht','harsh sunlight']] },
       { type: 'select', id: 'weather', label: 'Wetter / Atmosphäre', modes: ['photo', 'video'], options: [['Bitte wählen',''],['Sonnig Klar','clear sunny sky'],['Regnerisch','heavy rain'],['Gewitter','stormy lightning'],['Schnee','heavy snow'],['Neblig','thick fog'],['Bewölkt','overcast sky'],['Staubig','dusty atmosphere']] },
       
+      // --- NEW: HIGH-END PHYSICS & OPTICS ---
+      { type: 'header', label: 'High-End Physics & Optics', icon: 'fa-microchip', modes: ['photo', 'video'] },
+      { type: 'select', id: 'detailLevel', label: 'Detailgrad (Fidelity)', desc: 'Pixeldichte und KI-Glättung', modes: ['photo', 'video'], options: [['Standard',''],['8K RAW / High Fidelity','8k raw photo, extreme detail, no smoothing, uncompressed'],['4K Sharp','4k sharp focus'],['Soft / Painterly','soft painterly style']] },
+      { type: 'select', id: 'skinPhysics', label: 'Hautoberfläche', desc: 'Lichtverhalten auf Haut', modes: ['photo', 'video'], options: [['Standard',''],['Sub-surface scattering (SSS)','subsurface scattering, translucent skin, realistic epidermis'],['Porcelain (Glatt)','porcelain skin'],['Rough / Weathered','rough weathered skin texture']] },
+      { type: 'select', id: 'microDetails', label: 'Mikro-Details', desc: 'Erhöht Realismus', modes: ['photo', 'video'], options: [['Standard',''],['Pores & Vellus Hair','visible pores, vellus hair, natural skin texture imperfections'],['Perfect Skin','airbrushed perfect skin']] },
+      { type: 'select', id: 'sensorPhysics', label: 'Sensor-Physik', desc: 'Bildrauschen & Realismus', modes: ['photo', 'video'], options: [['Digital Clean',''],['CMOS Mobile Noise','cctv footage, phone camera noise, raw sensor data'],['Zero Denoising','zero denoising, grainy texture, authentic iso noise'],['Film Grain','heavy film grain']] },
+      { type: 'select', id: 'opticsLogic', label: 'Optik / Fokus', desc: 'Tiefenschärfe Simulation', modes: ['photo', 'video'], options: [['Standard',''],['24mm Wide / f/8 Deep Focus','24mm lens, f/8 aperture, deep depth of field, everything in focus'],['85mm Portrait / f/1.8 Bokeh','85mm lens, f/1.8 aperture, creamy bokeh background'],['Macro / Shallow','macro lens, shallow depth of field']] },
+      { type: 'select', id: 'lightingLogic', label: 'Lichtlogik (Flash)', desc: 'Vermeidet KI-Glow', modes: ['photo', 'video'], options: [['Standard',''],['Direct Neutral Flash','direct neutral white flash, harsh shadows, amateur photography'],['No Studio / Natural','no studio lighting, ambient light only'],['Pro Studio','professional studio lighting setup']] },
+      { type: 'select', id: 'colorFidelity', label: 'Farbtreue', desc: 'Sättigung & Grading', modes: ['photo', 'video'], options: [['Standard RGB',''],['Raw Tones / Flat','raw color tones, flat profile, low contrast, desaturated'],['Vivid / Instagram','vivid colors, high saturation, instagram filter'],['Monochrome','black and white, monochrome']] },
+
       { type: 'header', label: 'Tech Specs (Kamera)', icon: 'fa-camera', modes: ['photo', 'video'] },
       { type: 'select', id: 'aspectRatio', label: 'Format (Aspect Ratio)', desc: 'Bestimmt die Auflösung.', modes: ['photo', 'video'], options: [['16:9 (Kino breit)','16:9'],['9:16 (TikTok/Reel)','9:16'],['1:1 (Instagram/Square)','1:1'],['21:9 (Ultrawide)','21:9'],['4:3 (TV Klassisch)','4:3'],['3:4 (Portrait)','3:4'],['2.35:1 (Anamorphic)','2.35:1']] },
       { type: 'select', id: 'viewAngle', label: 'Kamerawinkel', desc: 'Perspektive der Aufnahme.', modes: ['photo', 'video'], options: [['Bitte wählen',''],['Augenhöhe (Neutral)','eye-level shot'],['Froschperspektive (Low Angle)','low angle shot looking up'],['Vogelperspektive (High Angle)','high angle shot looking down'],['Top-Down (Draufsicht)','top-down drone view'],['Over-the-Shoulder','over-the-shoulder shot'],['Dutch Angle (Schräg)','dutch angle dynamic shot'],['POV (Ego)','first-person POV shot'],['Makro (Close-Up)','extreme macro close-up'],['Weitwinkel','wide angle shot'],['Fischauge','fisheye lens effect'],['Tele (Zoom)','telephoto compression'],['Selfie','selfie shot']] },
@@ -279,6 +294,13 @@
         if (field.type === 'checkbox') {
           group.className = 'toggle-wrapper';
           group.innerHTML = `<input type="checkbox" id="${field.id}" ${field.default ? 'checked' : ''} onchange="handleVisibility()"><label for="${field.id}">${field.label}</label>`;
+        } else if (field.type === 'text') {
+           // Handle text input (Celebrity Name)
+           let inputHTML = `<label>${field.label}`;
+           if(field.desc) inputHTML += ` <span class="field-desc">${field.desc}</span>`;
+           inputHTML += `</label>`;
+           inputHTML += `<input type="text" id="${field.id}" placeholder="${field.placeholder || ''}" oninput="updateSummary()">`;
+           group.innerHTML = inputHTML;
         } else {
           let inputHTML = `<label>${field.label}`;
           if(field.desc) inputHTML += ` <span class="field-desc">${field.desc}</span>`;
@@ -299,17 +321,35 @@
     }
 
     function handleVisibility() {
-      // Helper function to manage a parent-child visibility relationship
       const manageVisibility = (parentId) => {
         const chk = document.getElementById(parentId);
         if (!chk) return;
         document.querySelectorAll(`[data-parent="${parentId}"]`).forEach(el => {
+          // Special case: If parent is 'describePerson', we have nested logic for celebrity
           el.style.display = chk.checked ? 'block' : 'none';
+          
+          // Re-trigger for nested items (like celebrityName inside useCelebrity)
+          if(el.querySelector('input[type="checkbox"]')) {
+             const subId = el.querySelector('input[type="checkbox"]').id;
+             if(chk.checked) {
+                 // If parent is visible, check child status
+                 const subChk = document.getElementById(subId);
+                 document.querySelectorAll(`[data-parent="${subId}"]`).forEach(subEl => {
+                     subEl.style.display = subChk.checked ? 'block' : 'none';
+                 });
+             } else {
+                 // Hide child's children if parent is hidden
+                 document.querySelectorAll(`[data-parent="${subId}"]`).forEach(subEl => {
+                     subEl.style.display = 'none';
+                 });
+             }
+          }
         });
       };
 
-      // Manage all toggleable sections
+      // Order matters for nesting
       manageVisibility('describePerson');
+      manageVisibility('useCelebrity'); 
       manageVisibility('describeAnimal');
       manageVisibility('describeObject');
 
@@ -323,8 +363,15 @@
       
       // Person
       if(document.getElementById('describePerson')?.checked) {
-        const pParts = [getVal('ageGroup'), getVal('ethnicity'), getVal('gender'), getVal('bodyType')];
-        const pText = pParts.filter(p => p && p !== '').join(' ');
+        let pText = "";
+        
+        // Celebrity Logic Override
+        if (document.getElementById('useCelebrity')?.checked && getVal('celebrityName')) {
+            pText = `CELEBRITY: ${getVal('celebrityName')}`;
+        } else {
+            const pParts = [getVal('ageGroup'), getVal('ethnicity'), getVal('gender'), getVal('bodyType')];
+            pText = pParts.filter(p => p && p !== '').join(' ');
+        }
         
         let details = [];
         if(getVal('hairColor') || getVal('hairStyle')) details.push(`Hair: ${getVal('hairColor')} ${getVal('hairStyle')}`);
@@ -366,6 +413,13 @@
       const cParts = [getVal('viewAngle'), getVal('filmStock'), getVal('renderEngine')].filter(Boolean);
       if(cParts.length) parts.push(`STYLE: ${cParts.join(', ')}`);
       
+      // NEW HIGH END PHYSICS
+      const physParts = [
+        getVal('detailLevel'), getVal('skinPhysics'), getVal('microDetails'), 
+        getVal('sensorPhysics'), getVal('opticsLogic'), getVal('lightingLogic'), getVal('colorFidelity')
+      ].filter(Boolean);
+      if(physParts.length) parts.push(`ADVANCED_PHYSICS: ${physParts.join(', ')}`);
+
       if (currentMode === 'video') {
           if(getVal('cameraMotion')) parts.push(`MOTION: ${getVal('cameraMotion')}`);
       }
@@ -528,48 +582,46 @@
       } catch (e) { console.error(e); }
     }
 
-    // --- LOGIC: HIGH-END GENERATION ---
+    // --- LOGIC: HIGH-END GENERATION (STRICT JSON SCHEMA) ---
     async function callGeminiAPI() {
       const context = getSummaryText();
       if(!context) return alert("Konfiguration leer.");
       
+      // Strict Schema Definition requested by User
       const prompt = `
-        You are a World-Class AI Prompt Engineer for ${currentMode === 'video' ? 'Sora/Kling' : 'Flux/SDXL/Midjourney'}.
+        You are a High-Performance AI Logic System for Image/Video Generation (Sora/Flux/Midjourney).
         
-        INPUT DATA:
+        INPUT CONTEXT (User Selections):
         ${context}
 
-        TASK:
-        Generate a strictly valid JSON payload optimized for high-end generation.
-        
-        RULES FOR PROMPTING:
-        1. **Keywords**: Use top-tier keywords (e.g., 'award-winning', 'masterpiece', '8k uhd', 'volumetric lighting', 'subsurface scattering').
-        2. **Structure**: 
-           - 'Subject': detailed description.
-           - 'Environment': atmosphere, background.
-           - 'Lighting': specific light setup.
-           - 'Camera': lens type, depth of field.
-        3. **Negative Prompt**: Add a robust negative prompt for ${currentMode === 'video' ? 'video stability' : 'image quality'}.
-        
-        OUTPUT FORMAT (JSON Only):
+        YOUR TASK:
+        Construct a precise JSON object based strictly on the following structure.
+        Do not add Markdown formatting (no \`\`\`json). Return purely the JSON string.
+
+        REQUIRED JSON STRUCTURE & LOGIC:
         {
-          "main_prompt": "The complete, cohesive prompt string...",
-          "prompt_components": {
-             "subject": "...",
-             "environment": "...",
-             "lighting": "...",
-             "style": "..."
+          "system_architecture": {
+            "version": "6.0 (High-Fidelity)",
+            "framework": "Define layout logic (e.g. 'Golden Ratio Composition', 'Rule of Thirds', '2x2 Grid')"
           },
-          "negative_prompt": "...",
-          "technical_parameters": {
-             "width": ${currentMode === 'video' ? 1920 : 1024},
-             "height": ${currentMode === 'video' ? 1080 : 1024},
-             "steps": 30,
-             "guidance_scale": 7.0,
-             "sampler": "DPM++ 2M Karras",
-             "seed": -1
+          "biometric_anchor": {
+            "subject_id": "Detailed description of the main subject (Person/Animal) derived from input.",
+            "identity_logic": "Consistency instructions (e.g. 'Strict facial feature lock', 'Allow variations')"
           },
-          "workflow_hints": "Suggestions for best results (e.g. 'Use Refiner', 'High Motion Bucket')"
+          "environmental_logic": {
+            "location": "Detailed scene location description.",
+            "lighting": "Complex lighting setup based on input (e.g. 'Volumetric God Rays with subsurface scattering' if SSS was selected)."
+          },
+          "technical_pipeline": {
+            "optical_simulation": "Camera specs derived from ADVANCED_PHYSICS input (e.g. '24mm lens, f/8, CMOS noise' or '85mm, f/1.8 bokeh').",
+            "prohibition_matrix": "What must be avoided? (e.g. 'No plastic skin', 'No AI smoothing', 'No oversaturation' - especially if 'Raw Tones' was selected)."
+          },
+          "content_layers": [
+            {
+              "frame_id": "main_shot",
+              "action": "The specific action or movement happening in the shot."
+            }
+          ]
         }
       `;
 
@@ -577,42 +629,103 @@
         const jsonStr = await fetchFromApi(prompt, document.getElementById('codeBlock'), 'optimizeAiBtn', 'aiSpinner');
         const json = JSON.parse(jsonStr);
         
-        // Force Correct Resolution from UI
-        if(getVal('aspectRatio')) {
-            const res = getResolutionFromAspect(getVal('aspectRatio'));
-            if(json.technical_parameters) {
-                json.technical_parameters.width = res.w;
-                json.technical_parameters.height = res.h;
-            }
-        }
-        
         const code = document.getElementById('codeBlock');
         code.textContent = JSON.stringify(json, null, 2);
         if(window.Prism) Prism.highlightElement(code);
       } catch(e) { console.error(e); }
     }
 
-    // --- LOGIC: LOCAL GENERATION ---
+    // --- LOGIC: LOCAL GENERATION (OPTIMIZED & EXTENDED) ---
     function generateLocalJSON() {
-      const context = getSummaryText();
-      const res = getResolutionFromAspect(getVal('aspectRatio') || "1:1");
+      // Helper to join array parts cleanly
+      const join = (...args) => args.filter(Boolean).join(', ');
+
+      // Build rich Subject ID
+      let subjectFull = "";
+      let isCelebrity = document.getElementById('useCelebrity')?.checked && getVal('celebrityName');
       
-      const result = {
-        main_prompt: context.replace(/\n/g, ', ').replace(/\|/g, ',') + ", masterpiece, best quality, 8k, ultra detailed",
-        prompt_components: { raw_context: context },
-        negative_prompt: "text, watermark, bad quality, blurry, ugly, deformed, mutation",
-        technical_parameters: {
-            width: res.w,
-            height: res.h,
-            aspect_ratio: getVal('aspectRatio') || "1:1"
-        }
-      };
+      // Build Tech Pipeline from new High-End fields
+      const optics = join(
+          getVal('detailLevel'), getVal('skinPhysics'), getVal('microDetails'),
+          getVal('sensorPhysics'), getVal('opticsLogic'), getVal('filmStock'),
+          getVal('renderEngine'), "digital crisp 8k, photorealistic raw photo"
+      );
       
-      if (currentMode === 'video') {
-          result.technical_parameters.fps = parseInt(getVal('fps')) || 24;
-          result.technical_parameters.duration = getVal('duration') || "5s";
+      // Collect parameters for identity_logic used in Celebrities
+      const surfaceParams = [
+          getVal('skinPhysics'), getVal('microDetails'), getVal('detailLevel')
+      ].filter(p => p && p.length > 0);
+
+      // Construct Biometric Anchor (Smart Switch)
+      let bioAnchor = {};
+      
+      if (isCelebrity) {
+          // CELEBRITY MODE - Complex Structure
+          bioAnchor = {
+              "subject_id": getVal('celebrityName'),
+              "identity_logic": {
+                  "fidelity_index": 1.0,
+                  "consistency_lock": "100% Geometry Match across all quadrants",
+                  "surface_parameters": surfaceParams.length > 0 ? surfaceParams : ["Standard Realism"]
+              }
+          };
+      } else {
+          // STANDARD MODE - Description String (Fixed missing details)
+          if(document.getElementById('describePerson')?.checked) {
+              subjectFull = join(
+                  getVal('ageGroup'), getVal('ethnicity'), getVal('gender'), getVal('bodyType'),
+                  getVal('hairColor') ? `${getVal('hairColor')} ${getVal('hairStyle')}` : '',
+                  getVal('eyeColor') ? `${getVal('eyeColor')} eyes` : '',
+                  getVal('clothing') ? `wearing ${getVal('clothing')}` : '',
+                  getVal('expression')
+              );
+          }
+          if(document.getElementById('describeAnimal')?.checked) {
+              subjectFull += (subjectFull ? " | " : "") + join(getVal('animalAppearance'), getVal('animalType'));
+          }
+          
+          bioAnchor = {
+              "subject_id": subjectFull || "Generic Subject",
+              "identity_logic": "Standard Consistency, preserve facial features"
+          };
       }
 
+      // Dynamic Prohibition Logic
+      let negative = "bad anatomy, blurry, low quality, watermark, text, deformed, ugly";
+      if(getVal('colorFidelity').includes('Raw')) negative += ", high contrast, hdr, oversaturated, vibrant";
+      if(getVal('detailLevel').includes('8K')) negative += ", jpeg artifacts, compression, smoothing, plastic skin";
+
+      const result = {
+        "system_architecture": {
+            "version": "Local-Offline-v2.1",
+            "framework": getVal('aspectRatio') || "16:9"
+        },
+        "biometric_anchor": bioAnchor,https://neocities.org/site_files/text_editor?filename=PromptMaker4%2Fprompt-generator-promi.html#
+        "environmental_logic": {
+            "location": join(getVal('location'), getVal('sceneType'), getVal('era')),
+            "lighting": join(getVal('lighting'), getVal('lightingLogic'), getVal('weather'))
+        },
+        "technical_pipeline": {
+            "optical_simulation": optics,
+            "prohibition_matrix": negative
+        },
+        "content_layers": [
+            {
+                "frame_id": "shot_01",
+                "action": getVal('action') || getVal('animalAction') || "Static pose"
+            }
+        ]
+      };
+      
+      // Video specific extras
+      if (currentMode === 'video') {
+         result.technical_pipeline.motion_parameters = {
+             camera: getVal('cameraMotion'),
+             fps: getVal('fps'),
+             duration: getVal('duration')
+         };
+      }
+      
       const code = document.getElementById('codeBlock');
       code.textContent = JSON.stringify(result, null, 2);
       if(window.Prism) Prism.highlightElement(code);
